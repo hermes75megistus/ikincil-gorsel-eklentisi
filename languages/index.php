@@ -1,1 +1,1 @@
-
+<?php // Sessizlik altindir 
