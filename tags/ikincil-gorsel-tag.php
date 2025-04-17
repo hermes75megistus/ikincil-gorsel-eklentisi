@@ -62,6 +62,18 @@ class Ikincil_Gorsel_Tag extends \Elementor\Core\DynamicTags\Data_Tag {
                 ],
             ]
         );
+        
+        $this->add_control(
+            'post_url_ekle',
+            [
+                'label' => __('Yazı Bağlantısı Ekle', 'ikincil-gorsel'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Evet', 'ikincil-gorsel'),
+                'label_off' => __('Hayır', 'ikincil-gorsel'),
+                'return_value' => 'yes',
+                'default' => 'yes',
+            ]
+        );
     }
 
     /**
@@ -87,6 +99,11 @@ class Ikincil_Gorsel_Tag extends \Elementor\Core\DynamicTags\Data_Tag {
             'id' => $gorsel_id,
             'url' => wp_get_attachment_image_src($gorsel_id, $boyut)[0],
         ];
+        
+        // Yazı bağlantısı eklenmesi istenmişse
+        if (isset($settings['post_url_ekle']) && 'yes' === $settings['post_url_ekle']) {
+            $image_data['link_to_post'] = get_permalink($post_id);
+        }
         
         return $image_data;
     }
