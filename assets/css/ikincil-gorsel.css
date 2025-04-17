@@ -1,1 +1,9 @@
-
+/* Ikincil Gorsel Eklentisi stil dosyasi */ 
+.ikincil-gorsel-alani { 
+    margin-bottom: 20px; 
+} 
+ 
+.ikincil-gorsel-alani img { 
+    max-width: 100%; 
+    height: auto; 
+} 
