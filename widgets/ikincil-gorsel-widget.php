@@ -118,6 +118,21 @@ class Ikincil_Gorsel_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'otomatik_baglanti',
+            [
+                'label' => __('Yazı Bağlantısı Kullan', 'ikincil-gorsel'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => __('Evet', 'ikincil-gorsel'),
+                'label_off' => __('Hayır', 'ikincil-gorsel'),
+                'return_value' => 'yes',
+                'default' => 'yes',
+                'condition' => [
+                    'kaynak_tipi' => 'dinamik',
+                ],
+            ]
+        );
+
+        $this->add_control(
             'baglanti',
             [
                 'label' => __('Görsel Bağlantısı', 'ikincil-gorsel'),
@@ -128,6 +143,9 @@ class Ikincil_Gorsel_Widget extends \Elementor\Widget_Base {
                     'url' => '',
                     'is_external' => false,
                     'nofollow' => false,
+                ],
+                'condition' => [
+                    'otomatik_baglanti!' => 'yes',
                 ],
             ]
         );
@@ -231,6 +249,9 @@ class Ikincil_Gorsel_Widget extends \Elementor\Widget_Base {
         
         echo '<div class="ikincil-gorsel-alani">';
         
+        $gorsel_html = '';
+        $post_url = '';
+        
         if ('dinamik' === $settings['kaynak_tipi']) {
             $gorsel_id = ikincil_gorsel_id();
             if ($gorsel_id) {
@@ -242,6 +263,11 @@ class Ikincil_Gorsel_Widget extends \Elementor\Widget_Base {
                         'class' => 'elementor-ikincil-gorsel',
                     ]
                 );
+                
+                // Otomatik bağlantı etkinse post URL'sini al
+                if ('yes' === $settings['otomatik_baglanti']) {
+                    $post_url = get_permalink();
+                }
             } else {
                 // Eğer ikincil görsel yoksa
                 $gorsel_html = \Elementor\Group_Control_Image_Size::get_attachment_image_html(
@@ -257,7 +283,13 @@ class Ikincil_Gorsel_Widget extends \Elementor\Widget_Base {
             $gorsel_html = \Elementor\Group_Control_Image_Size::get_attachment_image_html($settings, 'gorsel');
         }
         
-        if (!empty($settings['baglanti']['url'])) {
+        if (!empty($post_url)) {
+            // Post URL'si varsa (otomatik bağlantı aktifse)
+            echo '<a href="' . esc_url($post_url) . '">';
+            echo $gorsel_html;
+            echo '</a>';
+        } elseif (!empty($settings['baglanti']['url'])) {
+            // Manuel belirtilen URL varsa
             $target = $settings['baglanti']['is_external'] ? ' target="_blank"' : '';
             $nofollow = $settings['baglanti']['nofollow'] ? ' rel="nofollow"' : '';
             
@@ -265,6 +297,7 @@ class Ikincil_Gorsel_Widget extends \Elementor\Widget_Base {
             echo $gorsel_html;
             echo '</a>';
         } else {
+            // Herhangi bir bağlantı yoksa
             echo $gorsel_html;
         }
         
