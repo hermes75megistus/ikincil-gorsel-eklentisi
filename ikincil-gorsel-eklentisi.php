@@ -301,6 +301,37 @@ function ikincil_gorsel($size = 'thumbnail', $attr = [], $post_id = null) {
     return '';
 }
 
+/**
+ * İkincil görseli içeren HTML çıktısını link ile birlikte döndürür
+ * Bu fonksiyon özellikle loop içinde kullanım için uygundur
+ * 
+ * @param string $size Görsel boyutu
+ * @param array $attr Görsel özellikleri
+ * @param int $post_id Yazı ID'si
+ * @param bool $link_to_post Yazı bağlantısı eklenecek mi?
+ * @return string HTML çıktısı
+ */
+function ikincil_gorsel_html($size = 'thumbnail', $attr = [], $post_id = null, $link_to_post = true) {
+    if (!$post_id) {
+        $post_id = get_the_ID();
+    }
+    
+    $gorsel_id = ikincil_gorsel_id($post_id);
+    
+    if (!$gorsel_id) {
+        return '';
+    }
+    
+    $gorsel_html = wp_get_attachment_image($gorsel_id, $size, false, $attr);
+    
+    if ($link_to_post) {
+        $post_url = get_permalink($post_id);
+        return '<a href="' . esc_url($post_url) . '">' . $gorsel_html . '</a>';
+    }
+    
+    return $gorsel_html;
+}
+
 // Eklenti başlat
 $ikincil_gorsel_eklentisi = new Ikincil_Gorsel_Eklentisi();
 
